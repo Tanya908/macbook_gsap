@@ -1,8 +1,12 @@
 import NavBar from "./components/NavBar.tsx";
+import Hero from "./components/Hero.tsx";
 
 const App = () => {
     return (
-        <NavBar />
+        <main>
+            <NavBar />
+            <Hero />
+        </main>
     )
 }
 export default App
