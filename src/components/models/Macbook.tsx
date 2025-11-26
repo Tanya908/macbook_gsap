@@ -49,7 +49,7 @@ type GLTFResult = GLTF & {
     animations: THREE.AnimationClip[];
 };
 
-export function Model(props: ThreeElements["group"]) {
+export default function MacbookModel(props: ThreeElements["group"]) {
 
     const { nodes, materials } = useGLTF(
         "/models/macbook-transformed.glb"

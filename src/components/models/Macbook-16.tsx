@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { useGLTF, useTexture } from "@react-three/drei";
 import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { ThreeElements } from "@react-three/fiber";
+import useMacbookStore from "../../store";
+import {useEffect} from "react";
+import {noChangeParts} from "../../constants";
 
 type GLTFResult = GLTF & {
     nodes: {
@@ -49,13 +52,29 @@ type GLTFResult = GLTF & {
     animations: THREE.AnimationClip[];
 };
 
-export default function MacbookModel14(props: ThreeElements["group"]) {
-    const { nodes, materials } = useGLTF(
+export default function MacbookModel16(props: ThreeElements["group"]) {
+    const { color } = useMacbookStore();
+    const { nodes, materials, scene } = useGLTF(
         "/models/macbook-16-transformed.glb"
     ) as unknown as GLTFResult;
 
-    const texture = useTexture("/screen.png") as THREE.Texture;
+    const texture = useTexture("/screen.png");
 
+    useEffect(() => {
+        scene.traverse((obj) => {
+            const isMesh = (o: THREE.Object3D): o is THREE.Mesh =>
+                (o as any)?.isMesh === true;
+
+            if (!isMesh(obj)) return;
+            if (noChangeParts.includes(obj.name)) return;
+
+            const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+            mats.forEach((m) => {
+                if ((m as any)?.color instanceof THREE.Color) (m as any).color.set(color);
+
+            });
+        });
+    }, [color, scene]);
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.flipY = false;
 
